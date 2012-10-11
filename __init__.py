@@ -111,8 +111,9 @@ def push_settings():
     # Can't use this due to fabric bug #370
     # with cd(STAGE_CURRENT):
 
+    import fabric_settings
     settings_root = os.path.join(
-        os.path.dirname(__file__),
+        os.path.dirname(fabric_settings.__file__),
         "settings_production",
         PROJECT_NAME,
     )
