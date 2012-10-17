@@ -156,7 +156,7 @@ def push():
         run("git checkout .")
 
         run("mkdir -p static")
-        run("python manage.py collectstatic --clear --noinput")
+        run("python manage.py collectstatic --clear --noinput --verbosity 0")
 
 def reset_stage():
     with _activate_env(STAGE_CURRENT):
