@@ -129,7 +129,7 @@ def push_settings():
 def push_repo():
     local("git push ssh://{}/{}/ production".format(env.host_string, GIT_REPO))
 
-def push():
+def push(fast=False):
     push_repo()
 
     # Backup current environment
@@ -146,17 +146,19 @@ def push():
         run("git checkout production")
         run("git merge --ff-only origin/production")
 
-    install_requirements()
-    setup_submodules()
-    push_settings()
+    if not fast:
+        install_requirements()
+        setup_submodules()
+        push_settings()
 
     run("ln -sfn {} {}".format(STAGE_CURRENT, STAGE_ROOT))
     with _activate_env(STAGE_CURRENT):
         # Workaround for hostgator, fix missing symbolic links
         run("git checkout .")
 
-        run("mkdir -p static")
-        run("python manage.py collectstatic --clear --noinput --verbosity 0")
+        if not fast:
+            run("mkdir -p static")
+            run("python manage.py collectstatic --clear --noinput --verbosity 0")
 
 def reset_stage():
     with _activate_env(STAGE_CURRENT):
@@ -252,5 +254,11 @@ def deploy():
     promote()
     push()
     migrate_db()
+    reload_app()
+
+def deploy_fast():
+    _validate_local()
+    promote()
+    push(fast=True)
     reload_app()
 
