@@ -217,11 +217,19 @@ def load_fixtures():
 
 def install_requirements():
     skip_packages = _get_host_setting("skip_packages")
+    packages_to_install = []
     with open("requirements.txt", "r") as f:
         for line in f:
+            line = line.strip()
+            if not line:
+                continue
+
             if not any([x for x in skip_packages if line.startswith(x)]):
-                with _activate_env(STAGE_CURRENT):
-                    run("pip install " + line.strip())
+                packages_to_install.append(line)
+
+    if packages_to_install:
+        with _activate_env(STAGE_CURRENT):
+            run("pip install {}".format(" ".join(packages_to_install)))
 
 def setup_submodules():
     with _activate_env(STAGE_CURRENT):
