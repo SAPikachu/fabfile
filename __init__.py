@@ -47,6 +47,7 @@ HOSTS = {
                 ".htaccess", "env.sh",
             ),
         },
+        "resource_unavailable_workaround": True,
     },
 }
 
@@ -249,9 +250,19 @@ def setup_submodules():
                     PTH_NAME_FORMAT.format(name),
                 ))
 
+def kill_all_fcgi_processes():
+    with settings(warn_only=True):
+        command = "killall -w -s SIGHUP php php-cgi -r python-.*"
+        while run(command).return_code == 254:
+            print("Not able to run killall, trying again...")
+
+def resource_unavailable_workaround_if_necessary():
+    if _get_host_setting("resource_unavailable_workaround"):
+        kill_all_fcgi_processes()
 
 def deploy_init():
     _validate_local()
+    resource_unavailable_workaround_if_necessary()
     init_env()
     push()
     init_db()
@@ -259,6 +270,7 @@ def deploy_init():
 
 def deploy():
     _validate_local()
+    resource_unavailable_workaround_if_necessary()
     promote()
     push()
     migrate_db()
@@ -266,6 +278,7 @@ def deploy():
 
 def deploy_fast():
     _validate_local()
+    resource_unavailable_workaround_if_necessary()
     promote()
     push(fast=True)
     reload_app()
