@@ -10,6 +10,7 @@ from fabric.contrib.console import confirm
 from fabric.contrib.project import rsync_project
 
 from fabric_settings import *
+import fabric_settings
 
 SITE_PACKAGES_GLOB = "$VIRTUAL_ENV/lib/python*/site-packages"
 PTH_NAME_FORMAT = "_fab_{}.pth"
@@ -30,6 +31,12 @@ export DJANGO_SETTINGS_MODULE="{}.settings_production"
     NEW_INSTANCE_ID,
     MAIN_PACKAGE,
 )
+
+# Change CWD to root of the project so that we can get consistent result for
+# several operations without needing to manually specify full path
+FABFILE_ROOT = os.path.dirname(fabric_settings.__file__)
+ORIGINAL_CWD = os.getcwd()
+os.chdir(FABFILE_ROOT)
 
 HOSTS = {
     "hostgator": {
@@ -112,9 +119,7 @@ def push_settings():
     # Can't use this due to fabric bug #370
     # with cd(STAGE_CURRENT):
 
-    import fabric_settings
     settings_root = os.path.join(
-        os.path.dirname(fabric_settings.__file__),
         "settings_production",
         PROJECT_NAME,
     )
