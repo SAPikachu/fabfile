@@ -38,7 +38,7 @@ FABFILE_ROOT = os.path.dirname(fabric_settings.__file__)
 ORIGINAL_CWD = os.getcwd()
 os.chdir(FABFILE_ROOT)
 
-HOSTS = {
+HOST_SETTINGS = {
     "hostgator": {
         "reload_app_script": """
             cp fcgi.sh ~/public/{}/index.fcgi
@@ -58,8 +58,16 @@ HOSTS = {
     },
 }
 
-if not env.hosts:
-    env.hosts = list(HOSTS.keys())
+DEFAULT_HOST = "hostgator"
+
+TARGET_HOST = getattr(fabric_settings, "TARGET_HOST", DEFAULT_HOST)
+
+TARGET_SETTING = HOST_SETTINGS.get(
+    getattr(fabric_settings, "USE_SETTING", TARGET_HOST),
+    {},
+)
+
+env.hosts = [TARGET_HOST]
 
 env.use_ssh_config = True
 
@@ -71,7 +79,7 @@ def _activate_env(working_dir=PROJECT_DIR):
     return prefix(". {}/bin/activate && cd {}".format(PROJECT_DIR, working_dir))
 
 def _get_host_setting(key, default=None):
-    return HOSTS.get(env.host_string, {}).get(key)
+    return TARGET_SETTING.get(key, default)
 
 def destroy_env():
     if confirm("Do your really want to destroy the project on server?", 
