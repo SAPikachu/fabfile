@@ -58,7 +58,7 @@ HOST_SETTINGS = {
     },
     "dreamhost": {
         "reload_app_script": """
-            pkill python
+            pkill python || true
             mkdir -p {0}/public/tmp
             touch {0}/public/tmp/restart.txt
         """.format(STAGE_ROOT),
