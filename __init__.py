@@ -230,7 +230,7 @@ def load_fixtures():
         run("python manage.py loaddata fixtures/*.json")
 
 def install_requirements():
-    skip_packages = _get_host_setting("skip_packages")
+    skip_packages = _get_host_setting("skip_packages", {})
     packages_to_install = []
     with open("requirements.txt", "r") as f:
         for line in f:
