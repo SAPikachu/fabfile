@@ -129,8 +129,14 @@ def push_settings():
 
     settings_root = os.path.join(
         "settings_production",
-        PROJECT_NAME,
+        "{}@{}".format(PROJECT_NAME, TARGET_HOST),
     )
+
+    if not os.path.isdir(settings_root):
+        settings_root = os.path.join(
+            "settings_production",
+            PROJECT_NAME,
+        )
 
     put(os.path.join(settings_root, "settings_production.py"),
         os.path.join(STAGE_CURRENT, MAIN_PACKAGE),)
