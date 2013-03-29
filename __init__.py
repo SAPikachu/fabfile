@@ -56,6 +56,13 @@ HOST_SETTINGS = {
         },
         "resource_unavailable_workaround": True,
     },
+    "dreamhost": {
+        "reload_app_script": """
+            pkill python
+            mkdir -p {0}/public/tmp
+            touch {0}/public/tmp/restart.txt
+        """.format(STAGE_ROOT),
+    },
 }
 
 DEFAULT_HOST = "hostgator"
