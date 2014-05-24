@@ -259,7 +259,7 @@ def install_requirements():
 
     if packages_to_install:
         with _activate_env(STAGE_CURRENT):
-            run("pip install {}".format(" ".join(packages_to_install)))
+            run("pip install --no-deps {}".format(" ".join(packages_to_install)))
 
 def setup_submodules():
     with _activate_env(STAGE_CURRENT):
