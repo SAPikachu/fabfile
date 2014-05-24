@@ -22,6 +22,7 @@ STAGE_OLD = "{}/stage_old".format(PROJECT_DIR)
 STAGE_ROOT = "{}/stage".format(PROJECT_DIR)
 
 NEW_INSTANCE_ID = "".join(
+    [PROJECT_NAME, "-"] +
     [random.choice(string.ascii_lowercase) for x in range(8)]
 )
 EXTRA_INIT_SCRIPT = """
@@ -102,11 +103,13 @@ def init_env():
             if run("test -d " + PROJECT_NAME).succeeded:
                 abort("Project already exists on the server")
 
-        run("wget -O virtualenv.py --no-check-certificate https://raw.github.com/pypa/virtualenv/master/virtualenv.py")
+        run("test -d venv && rm -rf venv || true")
+        run("git clone https://github.com/pypa/virtualenv.git venv")
         system_site_packages = _get_host_setting("system_site_packages")
-        run("{} virtualenv.py {} {}".format(
+        run("cd venv && {} virtualenv.py {} {}/{}".format(
             REMOTE_PYTHON_EXEC, 
             "--system-site-packages" if system_site_packages else "",
+            VIRTUALENV_ROOT,
             PROJECT_NAME,
         ))
 
