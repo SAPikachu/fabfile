@@ -64,6 +64,11 @@ HOST_SETTINGS = {
             touch {0}/public/tmp/restart.txt
         """.format(STAGE_ROOT),
     },
+    "vps": {
+        "reload_app_script": """
+            ~/reload-webapp.sh {0}
+        """.format(PROJECT_NAME),
+    },
 }
 
 DEFAULT_HOST = "hostgator"
